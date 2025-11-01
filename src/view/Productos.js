@@ -1,19 +1,65 @@
+
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Button } from "react-native";
 import { db } from "../database/firebaseConfig.js";
 import { collection, getDocs, doc, deleteDoc, addDoc, updateDoc } from "firebase/firestore";
-import ListaProductos from "../Components/ListaProductos.js";
-import FormularioProductos from "../Components/FormularioProductos.js";
+import FormularioProductos from "../Components/FormularioProductos.js"
 import TablaProductos from "../Components/TablaProductos.js";
 
-const Productos = () => {
+const Productos = ({cerrarSesion}) => {
+
+  const [modoEdicion, setModoEdicion] = useState(false);
+  const [productoId, setProductoId] = useState(null);
+
   const [productos, setProductos] = useState([]);
+
   const [nuevoProducto, setNuevoProducto] = useState({
     nombre: "",
     precio: "",
   });
-  const [modoEdicion, setModoEdicion] = useState(false);
-  const [productoId, setProductoId] = useState(null);
+
+  const manejoCambio = (nombre, valor) => {
+    setNuevoProducto((prev) => ({
+      ...prev,
+      [nombre]: valor,
+    }));
+  };
+
+  const guardarProducto = async () => {
+    try {
+      if (nuevoProducto.nombre && nuevoProducto.precio) {
+        await addDoc(collection(db, "productos"), {
+          nombre: nuevoProducto.nombre,
+          precio: parseFloat(nuevoProducto.precio),
+        });
+        cargarDatos(); // Recargar lista
+        setNuevoProducto({ nombre: "", precio: "" });
+      } else {
+        alert("Por favor, complete todos los campos.");
+      }
+    } catch (error) {
+      console.error("Error al registrar producto:", error);
+    }
+  };
+
+  const actualizarProducto = async () => {
+    try {
+      if (nuevoProducto.nombre && nuevoProducto.precio) {
+        await updateDoc(doc(db, "productos", productoId), {
+          nombre: nuevoProducto.nombre,
+          precio: parseFloat(nuevoProducto.precio),
+        });
+        setNuevoProducto({ nombre: "", precio: "" });
+        setModoEdicion(false); // Volver al modo registro
+        setProductoId(null);
+        cargarDatos(); // Recargar lista
+      } else {
+        alert("Por favor, complete todos los campos.");
+      }
+    } catch (error) {
+      console.error("Error al actualizar producto:", error);
+    }
+  };
 
   const cargarDatos = async () => {
     try {
@@ -28,80 +74,33 @@ const Productos = () => {
     }
   };
 
-  useEffect(() => {
-    cargarDatos();
-  }, []);
-
   const eliminarProducto = async (id) => {
     try {
       await deleteDoc(doc(db, "productos", id));
-      await cargarDatos();
+      cargarDatos(); // Recargar lista
     } catch (error) {
-      console.error("Error al eliminar:", error)
-    }
-  };
-
-  const manejoCambio = (nombre, valor) => {
-    setNuevoProducto((prev) => ({
-      ...prev,
-      [nombre]: valor,
-    }))
-  };
-
-  const guardarProducto = async () => {
-    try {
-      if (nuevoProducto.nombre && nuevoProducto.precio) {
-        await addDoc(collection(db, "productos"), {
-          nombre: nuevoProducto.nombre,
-          precio: parseFloat(nuevoProducto.precio)
-        });
-
-        cargarDatos(); // Recargar lista
-
-        setNuevoProducto({ nombre: "", precio: "" });
-      } else {
-        alert("Por favor, complete todos los campos.");
-      }
-    } catch (error) {
-      console.error("Error al registrar producto:", error);
-    }
-  };
-
-  const actualizarProducto = async () => {
-    try {
-      if (nuevoProducto.nombre && nuevoProducto.precio) {
-
-        await updateDoc(doc(db, "productos", productoId), {
-          nombre: nuevoProducto.nombre,
-          precio: parseFloat(nuevoProducto.precio),
-        });
-
-        setNuevoProducto({ nombre: "", precio: "" });
-
-        setModoEdicion(false); // Volver al modo registro
-        setProductoId(null);
-
-        cargarDatos(); // Recargar lista
-      } else {
-        alert("Por favor, complete todos los campos.");
-      }
-    } catch (error) {
-      console.error("Error al actualizar producto:", error);
+      console.error("Error al eliminar:", error);
     }
   };
 
   const editarProducto = (producto) => {
     setNuevoProducto({
       nombre: producto.nombre,
-      precio: producto.precio.toString()
+      precio: producto.precio.toString(),
     });
-
     setProductoId(producto.id);
     setModoEdicion(true);
   };
 
+  useEffect(() => {
+    cargarDatos();
+  }, []);
+
   return (
     <View style={styles.container}>
+
+      <Button title="Cerrar Sesión" onPress={cerrarSesion} />
+
       <FormularioProductos
         nuevoProducto={nuevoProducto}
         manejoCambio={manejoCambio}
@@ -109,12 +108,13 @@ const Productos = () => {
         actualizarProducto={actualizarProducto}
         modoEdicion={modoEdicion}
       />
-      <TablaProductos
+      
+      <TablaProductos 
         productos={productos}
-        editarProducto={editarProducto}
+        editarProducto={editarProducto} 
         eliminarProducto={eliminarProducto}
       />
-
+      
     </View>
   );
 };
@@ -124,3 +124,5 @@ const styles = StyleSheet.create({
 });
 
 export default Productos;
+
+

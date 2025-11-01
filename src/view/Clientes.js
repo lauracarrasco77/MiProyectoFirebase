@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet,Button } from "react-native";
 import { db } from "../database/firebaseConfig.js";
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import FormularioCliente from "../Components/FormularioCliente.js";
 import TablaClientes from "../Components/TablaClientes.js";
 
-const Clientes = () => {
+const Clientes = ({ cerrarSesion }) => {
   const [clientes, setClientes] = useState([]);
 
   const cargarDatos = async () => {
@@ -36,7 +36,8 @@ const Clientes = () => {
 
   return (
     <View style={styles.container}>
-      <FormularioCliente cargarDatos={cargarDatos} />
+       <Button title="Cerrar Sesión" onPress={cerrarSesion} />
+      <FormularioCliente />
       <TablaClientes
         clientes={clientes}
         eliminarClientes={eliminarClientes}
