@@ -85,4 +85,29 @@ const styles = StyleSheet.create({
   }
 });
 
+const cargarDatosFirebase = async (nombreColeccion) => {
+  if (!nombreColeccion || typeof nombreColeccion !== 'string') {
+    console.error("Error: Se requiere un nombre de colección válido.");
+    return;
+  }
+
+  try {
+    const datosExportados = {};
+
+    // Obtener la referencia a la colección específica
+    const snapshot = await getDocs(collection(db, nombreColeccion));
+
+    // Mapear los documentos y agregarlos al objeto de resultados
+    datosExportados[nombreColeccion] = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return datosExportados;
+  } catch (error) {
+    console.error(`Error extrayendo datos de la colección '${nombreColeccion}':`, error);
+  }
+};
+
+
 export default TablaProductos;
