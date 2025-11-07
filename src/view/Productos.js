@@ -6,13 +6,16 @@ import {  collection, getDocs, deleteDoc, doc, addDoc, updateDoc
 import FormularioProductos from "../Components/FormularioProductos.js";
 import TablaProductos from "../Components/TablaProductos.js";
 
+
 // === NUEVAS IMPORTACIONES ===
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 import * as Clipboard from "expo-clipboard";
 
+
 // === COLECCIONES ===
 const colecciones = ["productos", "usuarios", "edades", "ciudades"];
+
 
 const Productos = ({ cerrarSesion }) => {
   const [productos, setProductos] = useState([]);
