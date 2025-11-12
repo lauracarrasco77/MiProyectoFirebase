@@ -6,6 +6,7 @@ import Login from "./src/Components/Login";
 import Ciudades from "./src/view/Ciudades";
 import Productos from "./src/view/Productos";
 import ProductosRealtime from "./src/view/ProductosRealtime";
+import CalculadoraIMC from "./src/view/CalculadoraDePeso";
 
 export default function App() {
   const [usuario, setUsuario] = useState(null);
@@ -30,7 +31,7 @@ export default function App() {
   // Si hay usuario autenticado, mostrar productos
   return (
     <View style={{ flex: 1 }}>
-      <ProductosRealtime cerrarSesion={cerrarSesion}/>
+      <CalculadoraIMC cerrarSesion={cerrarSesion}/>
     </View>
   );
 }

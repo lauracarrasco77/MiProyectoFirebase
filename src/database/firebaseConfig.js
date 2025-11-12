@@ -22,12 +22,12 @@ const firebaseConfig = {
 
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
-const realtimeDB = getDatabase(app);
 
 // Servicios
 const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
 const db = getFirestore(app);
+const realtimeDB = getDatabase(app);
 
-export { app, auth, db };
+export { app, auth, db, realtimeDB };
