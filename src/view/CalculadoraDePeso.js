@@ -132,7 +132,7 @@ const CalculadoraIMC = () => {
       <Button 
         title="Calcular IMC y Guardar Registro" 
         onPress={calcularIMC} 
-        color="#008080" // Color diferente para destacar
+        color="#83ccccff" // Color diferente para destacar
       />
       
       {resultadoIMC && (
